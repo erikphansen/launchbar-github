@@ -50,7 +50,7 @@ class Account {
   pullRequests() {
     let cacheKey = 'account-pull-requests-for-' + this.login;
 
-    let pullRequestEdges = Cache.fetch(cacheKey, 600, () => {
+    let pullRequestEdges = Cache.fetch(cacheKey, 300, () => {
       const query = `
         query($login: String!) {
           user(login: $login) {
@@ -101,7 +101,7 @@ class Account {
   issues() {
     let cacheKey = 'account-issues-for-' + this.login;
 
-    let issueEdges = Cache.fetch(cacheKey, 600, () => {
+    let issueEdges = Cache.fetch(cacheKey, 300, () => {
       const query = `
         query($login: String!) {
           user(login: $login) {
@@ -150,9 +150,9 @@ class Account {
   }
 
   assignedVaGovIssues() {
-    let cacheKey = 'account-issues-assigned-to-' + this.login;
+    let cacheKey = 'va-gov-issues-assigned-to-' + this.login;
 
-    let issueEdges = Cache.fetch(cacheKey, 1, () => {
+    let issueEdges = Cache.fetch(cacheKey, 300, () => {
       const query = `
         query($login: String!) {
           repository(name:"va.gov-team", owner:"department-of-veterans-affairs") {
@@ -203,7 +203,7 @@ class Account {
   gists() {
     let cacheKey = 'account-gists-for-' + this.login;
 
-    let gistEdges = Cache.fetch(cacheKey, 600, () => {
+    let gistEdges = Cache.fetch(cacheKey, 300, () => {
       const query = `
         query($login: String!) {
           user(login: $login) {
