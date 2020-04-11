@@ -149,6 +149,57 @@ class Account {
     });
   }
 
+  assignedVaGovIssues() {
+    let cacheKey = 'account-issues-assigned-to-' + this.login;
+
+    let issueEdges = Cache.fetch(cacheKey, 1, () => {
+      const query = `
+        query($login: String!) {
+          repository(name:"va.gov-team", owner:"department-of-veterans-affairs") {
+            issues(first: 100, states: [OPEN], filterBy: {assignee: $login}, orderBy: {field: UPDATED_AT, direction: DESC}) {
+              edges {
+                node {
+                  title
+                  number
+                  repository {
+                    name
+                    owner {
+                      login
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      let variables = { login: this.login };
+      let result = GraphQL.execute(query, variables);
+
+      if (result) {
+        if (result.data && result.data.repository) {
+          return result.data.repository.issues.edges;
+        } else {
+          return [];
+        }
+      } else {
+        return [];
+      }
+    });
+
+    return issueEdges.map(function(edge) {
+      let issue = edge.node;
+      let number      = issue.number;
+      let title       = issue.title;
+
+      let owner = new Account(issue.repository.owner.login);
+      let repo  = new Repository(owner, issue.repository.name);
+
+      return new Issue(repo, number, title);
+    });
+  }
+
   gists() {
     let cacheKey = 'account-gists-for-' + this.login;
 

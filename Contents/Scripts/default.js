@@ -4,23 +4,30 @@ class GitHubLB {
 
     this.defaultMenuItems = [
       {
-        title: 'My Repositories',
-        icon: 'repoTemplate.png',
-        action: 'openAccountRepositories',
+        title: 'My Open Pull Requests',
+        icon: 'pullRequestTemplate.png',
+        action: 'openAccountPullRequests',
         actionArgument: handle,
         actionReturnsItems: true,
       },
       {
-        title: 'My Open Issues',
+        title: 'My VA.gov Issues',
+        icon: 'thingsTemplate.png',
+        action: 'openMyVaGovIssues',
+        actionArgument: handle,
+        actionReturnsItems: true,
+      },
+      {
+        title: 'My Issues',
         icon: 'issueTemplate.png',
         action: 'openAccountIssues',
         actionArgument: handle,
         actionReturnsItems: true,
       },
       {
-        title: 'My Open Pull Requests',
-        icon: 'pullRequestTemplate.png',
-        action: 'openAccountPullRequests',
+        title: 'My Repositories',
+        icon: 'repoTemplate.png',
+        action: 'openAccountRepositories',
         actionArgument: handle,
         actionReturnsItems: true,
       },
@@ -400,6 +407,25 @@ class GitHubLB {
     }
   }
 
+  openMyVaGovIssues(login) {
+    let account = new Account(login);
+
+    if (LaunchBar.options.commandKey == 1) {
+      LaunchBar.openURL('https://github.com/issues/assigned');
+      LaunchBar.executeAppleScript('tell application "LaunchBar" to hide');
+    } else {
+      return [
+        {
+          title: 'View All VA.gov Issues Assigned To Me',
+          icon: 'issueTemplate.png',
+          url: 'https://github.com/department-of-veterans-affairs/va.gov-team/issues/assigned/erikphansen',
+        }
+      ].concat(account.assignedVaGovIssues().map(function(issue) {
+        return issue.toMenuItem();
+      }));
+    }
+  }
+
   openAccountGists(login) {
     let account = new Account(login);
 
@@ -520,6 +546,10 @@ function openAccountPullRequests(string) {
 
 function openAccountIssues(string) {
   return app.openAccountIssues(string);
+}
+
+function openMyVaGovIssues(My) {
+  return app.openMyVaGovIssues(My);
 }
 
 function openAccountGists(string) {
